@@ -1,0 +1,20 @@
+{
+  "name": "gulp-assets-deps-test",
+  "version": "1.0.0",
+  "description": "Test project for gulp assets dependencies",
+  "main": "gulpfile.js",
+  "scripts": {
+    "start": "gulp",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "mcaligares@munaylab.org",
+  "license": "MIT",
+  "devDependencies": {
+    "gulp": "^4.0.0"
+  },
+  "dependencies": {
+    "bootstrap": "^4.1.3",
+    "fontawesome": "^4.7.2",
+    "jquery": "^3.3.1"
+  }
+}
