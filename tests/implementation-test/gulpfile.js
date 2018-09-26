@@ -1,5 +1,5 @@
 const gulp = require('gulp');
-const assets = require('../gulp-assets-deps.js');
+const assets = require('../../gulp-assets-deps.js');
 
 gulp.task('default', function() {
   return assets.read(

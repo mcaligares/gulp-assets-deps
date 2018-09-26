@@ -1,28 +1,51 @@
 const fs = require('fs');
+const _ = require('lodash');
 const path = require('path');
 const stream = require('stream');
+const defaultOptions = require('./assets-options');
 
-const assetsWritter = function(options) {
+class AssetsWritter {
+  constructor (options) {
+    this._options = _.merge({}, defaultOptions, options);
+  }
 
-  let distFolder = path.resolve('vendor');
+  get options () {
+    return this._options;
+  }
 
-  if (!fs.existsSync(distFolder))
-    fs.mkdirSync(distFolder);
+  set options (value) {
+    this._options = value;
+  }
 
-  let _stream = new stream.Transform({objectMode: true});
+  transform () {
+    let _stream = new stream.Transform({objectMode: true});
+    let _this = this;
+    _stream._transform = function (sourceFile, unused, callback) {
+      let destFile = _this.buildDestFilePath(sourceFile.path);
+      _this.copyResource(sourceFile.path, destFile)
+      callback(null, destFile);
+    };
 
-  _stream._transform = function (originalFile, unused, callback) {
-    let sourceFile = originalFile.path;
-    let filename = path.basename(sourceFile)
-    let distFile = path.join(distFolder, filename);
+    return _stream;
+  }
 
-    fs.createReadStream(sourceFile)
-        .pipe(fs.createWriteStream(distFile))
+  buildDestFilePath (sourceFileName) {
+    let destFolder = this.destFolder;
+    return path.join(destFolder, path.basename(sourceFileName));
+  }
 
-    callback(null, distFile);
-  };
+  get destFolder () {
+    let destFolder = path.resolve(this.options.destFolder)
 
-  return _stream;
-};
+    if (!fs.existsSync(destFolder))
+      fs.mkdirSync(destFolder);
 
-module.exports = assetsWritter;
+    return destFolder;
+  }
+
+  copyResource (src, dest) {
+    fs.createReadStream(src).pipe(fs.createWriteStream(dest))
+  }
+}
+
+module.exports = AssetsWritter;
