@@ -4,7 +4,7 @@
   "description": "Gulp plugin for manage assets dependencies. Useful for frontend-developers :)",
   "main": "gulp-assets-deps.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "lab -cv tests/unit-test"
   },
   "repository": {
     "type": "git",
@@ -24,8 +24,10 @@
   },
   "homepage": "https://github.com/mcaligares/gulp-assets-deps#readme",
   "devDependencies": {
+    "code": "^5.2.0",
     "fancy-log": "^1.3.2",
     "gulp": "^4.0.0",
+    "lab": "^16.1.0",
     "lodash": "^4.17.11"
   }
 }
