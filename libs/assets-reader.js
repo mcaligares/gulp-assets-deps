@@ -21,8 +21,7 @@ class AssetsReader {
 
   get projectDependencies () {
     let packageFile = this.options.packageFile || path.join(projectFolder, 'package.json');
-    let pkg = require(packageFile);
-    return pkg.dependencies;
+    return require(packageFile).dependencies;
   }
 
   getSourceFolderFor (dependency) {
@@ -33,8 +32,8 @@ class AssetsReader {
     let sourceFolder = this.getSourceFolderFor(dependency);
     let buildFiles = this.getBuildFilesFor(dependency, resource);
 
-    for (let i in buildFiles) {
-      let buildFile = path.join(sourceFolder, buildFiles[i]);
+    for (let buildFile of buildFiles) {
+      buildFile = path.join(sourceFolder, buildFile);
       if (fs.existsSync(buildFile)) return buildFile;
     }
 
@@ -56,10 +55,7 @@ class AssetsReader {
 
       for (let resource in this.options.resources) {
         let fileFound = this.findDependency(dependency, resource);
-
-        if (fileFound) {
-          sourceFilesList.push(fileFound);
-        }
+        if (fileFound) sourceFilesList.push(fileFound);
       }
     }
     return sourceFilesList;

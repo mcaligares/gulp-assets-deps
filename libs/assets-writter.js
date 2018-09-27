@@ -18,8 +18,8 @@ class AssetsWritter {
   }
 
   transform () {
-    let _stream = new stream.Transform({objectMode: true});
     let _this = this;
+    let _stream = new stream.Transform({objectMode: true});
     _stream._transform = function (sourceFile, unused, callback) {
       let destFile = _this.buildDestFilePath(sourceFile.path);
       _this.copyResource(sourceFile.path, destFile)
@@ -36,10 +36,7 @@ class AssetsWritter {
 
   get destFolder () {
     let destFolder = path.resolve(this.options.destFolder)
-
-    if (!fs.existsSync(destFolder))
-      fs.mkdirSync(destFolder);
-
+    if (!fs.existsSync(destFolder)) fs.mkdirSync(destFolder);
     return destFolder;
   }
 

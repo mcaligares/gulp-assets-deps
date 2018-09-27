@@ -3,22 +3,54 @@ const _ = require('lodash');
 const { expect } = require('code');
 const lab = exports.lab = require('lab').script();
 
-const AssetsReader = require('../../libs/assets-reader')
+const AssetsWritter = require('../../libs/assets-writter')
 const defaultOptions = require('../../libs/assets-options')
 
-lab.test('default options object', () => {
-  expect(new AssetsReader().options).to.equal(defaultOptions);
-});
+lab.experiment('assets writter test', () => {
 
-lab.test('property equals to assigned', () => {
-  let options = { resources: { js: false } };
-  expect(new AssetsReader(options).options.resources.js).to.be.false();
-});
+  lab.test('default options object', () => {
+    expect(new AssetsWritter().options).to.equal(defaultOptions);
+  });
 
-lab.test('package file dependencies', () => {
-  let options = { packageFile: '/tmp/package.json' };
-  let packageJson = { dependencies: { plugin: "1.0.0" } };
+  lab.test('setting options', () => {
+    let writter = new AssetsWritter()
+    expect(writter.options.destFolder).to.equal(defaultOptions.destFolder);
 
-  fs.writeSync(fs.openSync(options.packageFile, 'w'), JSON.stringify(packageJson));
-  expect(new AssetsReader(options).projectDependencies).to.equal(packageJson.dependencies);
-});
+    writter.options = { destFolder: 'libs' }
+    expect(writter.options.destFolder).to.equal('libs');
+  });
+
+  lab.test('property equals to assigned', () => {
+    let options = { destFolder: 'libs' };
+    expect(new AssetsWritter(options).options.destFolder).to.equal('libs')
+  });
+
+  lab.test('build dest file path', () => {
+    let filename = 'plugin.js';
+    let options = { destFolder: 'libs' };
+    let filepath = `${process.cwd()}/libs/${filename}`
+    expect(new AssetsWritter(options).buildDestFilePath(filename)).to.equal(filepath);
+  });
+
+  lab.test('getting dest folder', () => {
+    let destFolder = `${process.cwd()}/dest`
+    expect(fs.existsSync(destFolder)).to.be.false();
+
+    let writter = new AssetsWritter({ destFolder: destFolder });
+    expect(writter.destFolder).to.equal(destFolder);
+    expect(fs.existsSync(destFolder)).to.be.true();
+    fs.rmdirSync(destFolder)
+  });
+
+  lab.test('copy resource from src to dest', () => {
+    let src = '/tmp/src.js', dest = '/tmp/dest.js';
+    fs.unlinkSync(dest)
+    fs.writeSync(fs.openSync(src, 'w'), 'example');
+
+    new AssetsWritter().copyResource(src, dest);
+
+    expect(fs.existsSync(src)).to.be.true();
+    expect(fs.existsSync(dest)).to.be.true();
+  });
+
+})
